@@ -1,0 +1,138 @@
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+generator client {
+  provider             = "prisma-client-py"
+  recursive_type_depth = 5
+  interface            = "sync"
+}
+
+model Igreja {
+  id              Int      @id @default(autoincrement())
+  nome            String
+  numeroDaArea    String?  @map("numero_da_area")
+  endereco        String?
+  pastor          String?
+  superintendente String?
+  tipo            TipoIgreja?
+
+  // Relações
+  usuarios        Usuario[]
+  turmas          Turma[]
+  alunos          Aluno[]  @relation("AlunoArea")
+
+  @@map("igreja")
+}
+
+model Classe {
+  id            Int      @id @default(autoincrement())
+  nome          String
+  nomeFantasia  String?  @map("nome_fantasia")
+
+  // Relações
+  turmas        Turma[]
+  alunos        Aluno[]
+
+  @@map("classe")
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  igrejaID  Int?     @map("igreja_id")
+  nome      String
+  telefone  String?
+  email     String   @unique
+  senha     String
+  roleTipo  RoleUsuario @map("role_tipo")
+
+  // Relações
+  igreja    Igreja?  @relation(fields: [igrejaID], references: [id])
+  turmas    Turma[]
+
+  @@map("usuario")
+}
+
+model Turma {
+  id          Int      @id @default(autoincrement())
+  nome        String
+  igrejaID    Int?     @map("igreja_id")
+  classeID    Int?     @map("classe_id")
+  professorID Int?     @map("professor_id")
+
+  // Relações
+  igreja      Igreja?  @relation(fields: [igrejaID], references: [id])
+  classe      Classe?  @relation(fields: [classeID], references: [id])
+  professor   Usuario? @relation(fields: [professorID], references: [id])
+  alunos      Aluno[]
+  registros   RegistroAula[]
+
+  @@map("turma")
+}
+
+model Aluno {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  telefone  String?
+  areaID    Int?     @map("area_id")
+  turmaID   Int?     @map("turma_id")
+  classeID  Int?     @map("classe_id")
+
+  // Relações
+  area      Igreja?  @relation("AlunoArea", fields: [areaID], references: [id])
+  turma     Turma?   @relation(fields: [turmaID], references: [id])
+  classe    Classe?  @relation(fields: [classeID], references: [id])
+  frequencias FrequenciaAluno[]
+
+  @@map("aluno")
+}
+
+model RegistroAula {
+  id                  Int      @id @default(autoincrement())
+  data                DateTime
+  trimestre           String?
+  turmaID             Int?     @map("turma_id")
+  ofertas             Float?
+  biblias             Int?
+  visitantes          Int?
+  revistas            Int?
+  totalDeAssistencias Int?     @map("total_de_assistencias")
+
+  // Relações
+  turma               Turma?   @relation(fields: [turmaID], references: [id])
+  frequencias         FrequenciaAluno[]
+
+  @@map("registro_aula")
+}
+
+model FrequenciaAluno {
+  id        Int      @id @default(autoincrement())
+  aulaID    Int      @map("aula_id")
+  alunoID   Int      @map("aluno_id")
+  estado    EstadoFrequencia
+
+  // Relações
+  aula      RegistroAula @relation(fields: [aulaID], references: [id])
+  aluno     Aluno        @relation(fields: [alunoID], references: [id])
+
+  @@unique([aulaID, alunoID])
+  @@map("frequencia_aluno")
+}
+
+enum RoleUsuario {
+  Professor
+  Admin
+  Superadmin
+  Aluno
+}
+
+enum TipoIgreja {
+  area @map("área")
+  congregacao @map("congregação")
+}
+
+enum EstadoFrequencia {
+  Falta
+  Presenca @map("Presença")
+}
