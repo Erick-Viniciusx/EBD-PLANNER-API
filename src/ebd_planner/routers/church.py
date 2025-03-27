@@ -28,7 +28,6 @@ def create_user(church: ChurchSchema):
     db.disconnect()
     return db_igreja
 
-
 @router.get('/', response_model=ChurchList)
 def read_users():
     db.connect()
