@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from prisma import Prisma
 from fastapi import FastAPI
-from ebd_planner.routers import church
+from ebd_planner.routers import church, users
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager   
 from prisma import Prisma
@@ -29,6 +29,6 @@ app.add_middleware(
 
 
 app.include_router(church.router)
-
+app.include_router(users.router)
 
  

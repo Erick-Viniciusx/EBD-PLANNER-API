@@ -5,6 +5,11 @@ class TypeChurch(str, Enum):
     area = 'area'
     congregacao = 'congregacao'
 
+class RoleUser(str, Enum):
+    Superadmin = 'Superadmin'
+    Professor = 'Professor'
+    Admin = 'Admin'
+    Aluno = 'Aluno'
 class ChurchSchema(BaseModel):
     nome: str
     numero_area: str 
@@ -24,3 +29,15 @@ class ChurchPublic(BaseModel):
 
 class ChurchList(BaseModel):
     churchs: list[ChurchPublic]
+
+class UserSchema(BaseModel):
+    nome: str 
+    telefone: str 
+    email: EmailStr
+    senha: str
+    roleTipo: RoleUser
+class UserPublic(BaseModel):
+    nome: str 
+    telefone: str 
+    email: EmailStr
+    roleTipo: RoleUser

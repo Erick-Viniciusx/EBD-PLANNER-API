@@ -11,7 +11,8 @@ dependencies = [
     "prisma (>=0.15.0,<0.16.0)",
     "fastapi[standard] (>=0.115.12,<0.116.0)",
     "dotenv (>=0.9.9,<0.10.0)",
-    "python-dotenv (>=1.0.1,<2.0.0)"
+    "python-dotenv (>=1.0.1,<2.0.0)",
+    "pwdlib[argon2] (>=0.2.1,<0.3.0)"
 ]
 
 [tool.poetry]

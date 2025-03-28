@@ -10,7 +10,7 @@ load_dotenv()
 router = APIRouter(prefix='/Igreja', tags=['Igreja'])
     
 @router.post('/', response_model=ChurchPublic, status_code=HTTPStatus.CREATED)
-def create_user(request: Request,church: ChurchSchema):
+def create_church(request: Request,church: ChurchSchema):
     db = request.app.state.db
     db_igreja = db.igreja.create(
         data={
@@ -26,9 +26,9 @@ def create_user(request: Request,church: ChurchSchema):
     return db_igreja
 
 @router.get('/', response_model=ChurchList)
-def read_users(request: Request):
+def read_all_churchs(request: Request):
     db = request.app.state.db
     church = db.igreja.find_many()
 
     return {'churchs': church}
-
+        
