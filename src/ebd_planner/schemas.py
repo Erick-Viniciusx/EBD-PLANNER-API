@@ -41,3 +41,7 @@ class UserPublic(BaseModel):
     telefone: str 
     email: EmailStr
     roleTipo: RoleUser
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str

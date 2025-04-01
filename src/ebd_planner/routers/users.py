@@ -2,9 +2,10 @@ from prisma import Prisma
 from http import HTTPStatus
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, Depends
 from ebd_planner.schemas import UserPublic, UserSchema
-from ebd_planner.security import get_password_hash
+from ebd_planner.security import get_password_hash, get_current_user
+
 
 
 load_dotenv()
@@ -34,3 +35,16 @@ def create_user(request: Request , user: UserSchema):
     )
 
     return db_user
+
+@router.put('/{user_id}', response_model=UserPublic)
+def update_user(
+    user_id: int,
+    user: UserSchema,
+    request: Request,
+    current_user=Depends(get_current_user), 
+):
+    db: Prisma = request.app.state.db
+    if current_user.id != user_id:
+        raise HTTPException(status_code=400, detail='Not enough permissions')
+    
+    ...
